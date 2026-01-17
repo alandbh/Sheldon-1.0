@@ -13,7 +13,7 @@ export class GeminiService {
   async generatePythonScript(userPrompt: string): Promise<string> {
     try {
       const response = await this.client.models.generateContent({
-        model: "gemini-3-flash-preview", // Excellent for coding tasks
+        model: "gemini-2.0-flash-exp",
         contents: userPrompt,
         config: {
           systemInstruction: INITIAL_SYSTEM_INSTRUCTION,
@@ -45,7 +45,7 @@ export class GeminiService {
       `;
 
       const response = await this.client.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.0-flash-exp",
         contents: prompt,
         config: {
           systemInstruction: RESPONSE_FORMATTER_PROMPT,
