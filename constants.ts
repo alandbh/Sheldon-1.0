@@ -14,7 +14,7 @@ Seu objetivo é EXCLUSIVAMENTE escrever um script Python que extraia os dados ne
 REGRAS DE OURO:
 1. Você DEVE seguir rigorosamente as "SYSTEM INSTRUCTIONS PARA LLM" abaixo.
 2. Você assume que os arquivos 'heuristicas.json' e 'resultados.json' já existem no diretório local.
-3. O output do seu script Python deve ser APENAS texto (print) com os dados brutos solicitados (Listas A, B, C, D e Insight E).
+3. O output do seu script Python deve ser APENAS texto (print) com os dados brutos solicitados (Listas A, B, C, D e Insight E), a menos que o usuário faça um pedido especial como "quantos players possuem busca por voz apenas no app?". Nesse caso, você deve emcontrar a heurística específica de busca por voz e listar os players que possuem o recurso na jornada especificada pelo usuário, lembrando sempre de colocar o total no topo da lista.
 4. NÃO inclua explicações ou markdown no início ou fim. Apenas o código puro.
 5. Os anos de análise são: ATUAL=${currentYear} (chave JSON: '${yearKeyCurrent}') e ANTERIOR=${previousYear} (chave JSON: '${yearKeyPrevious}').
 

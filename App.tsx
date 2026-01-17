@@ -12,18 +12,38 @@ declare global {
   }
 }
 
+// Helper para ler API Key em qualquer ambiente (Vite ou Node)
+const getEnvApiKey = () => {
+  try {
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+      // @ts-ignore
+      return import.meta.env.VITE_API_KEY;
+    }
+  } catch (e) {}
+
+  try {
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
+    }
+  } catch (e) {}
+  
+  return '';
+};
+
 export default function App() {
-  const [apiKey, setApiKey] = useState(process.env.API_KEY || '');
+  const [apiKey, setApiKey] = useState(getEnvApiKey());
   const [apiUrl, setApiUrl] = useState('');
   const [resultsApiKey, setResultsApiKey] = useState('');
   
   // FIX: Initialize GeminiService immediately if API key exists in environment
-  const [gemini, setGemini] = useState<GeminiService | null>(() => 
-    process.env.API_KEY ? new GeminiService(process.env.API_KEY) : null
-  );
+  const [gemini, setGemini] = useState<GeminiService | null>(() => {
+    const key = getEnvApiKey();
+    return key ? new GeminiService(key) : null;
+  });
   
   const [state, setState] = useState<AppState>({
-    hasApiKey: !!process.env.API_KEY,
+    hasApiKey: !!getEnvApiKey(),
     isPythonReady: false,
     activeTab: 'home',
     selectedProject: null,
