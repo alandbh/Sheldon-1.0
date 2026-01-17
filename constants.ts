@@ -14,7 +14,7 @@ Seu objetivo é EXCLUSIVAMENTE escrever um script Python que extraia os dados ne
 REGRAS DE OURO:
 1. Você DEVE seguir rigorosamente as "SYSTEM INSTRUCTIONS PARA LLM" abaixo.
 2. Você assume que os arquivos 'heuristicas.json' e 'resultados.json' já existem no diretório local.
-3. O output do seu script Python deve ser APENAS texto (print) com os dados brutos solicitados (Listas A, B, C, D e Insight E), a menos que o usuário faça um pedido especial como "quantos players possuem busca por voz apenas no app?". Nesse caso, você deve emcontrar a heurística específica de busca por voz e listar os players que possuem o recurso na jornada especificada pelo usuário, lembrando sempre de colocar o total no topo da lista.
+3. O output do seu script Python deve ser APENAS texto (print) com os dados brutos solicitados, incluindo o cabeçalho da heurística.
 4. NÃO inclua explicações ou markdown no início ou fim. Apenas o código puro.
 5. Os anos de análise são: ATUAL=${currentYear} (chave JSON: '${yearKeyCurrent}') e ANTERIOR=${previousYear} (chave JSON: '${yearKeyPrevious}').
 
@@ -94,7 +94,8 @@ def print_player_list(title, player_names):
     clean_names = [str(n) for n in player_names if n is not None]
     clean_names.sort() 
     
-    print(f"\\n{title} [{len(clean_names)}]")
+    # O Python deve imprimir explicitamente a contagem aqui para garantir que o LLM a veja
+    print(f"\\n### {title} [{len(clean_names)}]")
     for name in clean_names:
         print(f"- {name}")
 
@@ -176,8 +177,17 @@ Para cada heurística solicitada (h_id):
 1. **Obter Regra de Sucesso:**
    Use \`meta = get_heuristic_metadata(h_id)\`. Se None, pule.
    Regra: \`rule = meta.get('success', '=5')\`.
+   Nome: \`h_name = meta.get('name', 'Nome Desconhecido')\`
 
-2. **Processar ${currentYear} (players_current):**
+2. **IMPRIMIR CABEÇALHO DA HEURÍSTICA (MANDATÓRIO):**
+   \`\`\`python
+   print(f"\\n----------------------------------------")
+   print(f"## {h_id} - {h_name}")
+   print(f"**Critério de Sucesso:** \`{rule}\`")
+   print(f"----------------------------------------\\n")
+   \`\`\`
+
+3. **Processar ${currentYear} (players_current):**
    - \`success_current_names = []\`
    - \`fail_current_names = []\`
    - Para cada \`p\` em \`players_current\`:
@@ -189,7 +199,7 @@ Para cada heurística solicitada (h_id):
      - Se \`is_success\`: \`success_current_names.append(safe_get_name(p))\`
      - Caso contrário (se tem scores mas falhou): \`fail_current_names.append(safe_get_name(p))\`
 
-3. **Processar Evolução (${previousYear} vs ${currentYear}):**
+4. **Processar Evolução (${previousYear} vs ${currentYear}):**
    - \`improved_names = []\`
    - \`worsened_names = []\`
    - Para cada \`p_curr\` em \`players_current\`:
@@ -204,14 +214,14 @@ Para cada heurística solicitada (h_id):
        - Se (not status_prev E status_curr): \`improved_names.append(safe_get_name(p_curr))\`
        - Se (status_prev E not status_curr): \`worsened_names.append(safe_get_name(p_curr))\`
 
-4. **Imprimir Resultados:**
+5. **Imprimir Resultados:**
    Use OBRIGATORIAMENTE a função auxiliar:
    \`print_player_list(f"A. Players com Êxito ({currentYear})", success_current_names)\`
    \`print_player_list(f"B. Players que Falharam ({currentYear})", fail_current_names)\`
    \`print_player_list("C. Players que Melhoraram", improved_names)\`
    \`print_player_list("D. Players que Pioraram", worsened_names)\`
 
-5. **Insight (E):**
+6. **Insight (E):**
    Gere o insight E usando o \`context_map\` (incluído abaixo no script).
 
 **Context Map:**
@@ -268,27 +278,45 @@ context_map = {
 
 ### 4. FORMATO DE SAÍDA FINAL (PRINT)
 \`\`\`text
-... (Outputs formatados pelas funções acima) ...
+----------------------------------------
+## 3.1 - Voice Search
+**Critério de Sucesso:** \`=5\`
+----------------------------------------
 
-E. Descoberta (insight)
-POSITIVA:
-{Qtd_Sucesso} de {Total_Elegiveis} e-commerces [frase do contexto].
+### A. Players com Êxito ({currentYear}) [2]
+- Amazon
+- Mercado Livre
 
-NEGATIVA:
-{Qtd_Fracasso} de {Total_Elegiveis} e-commerces [frase do contexto reverso].
+... (demais listas) ...
+
+### E. Descoberta (insight)
+**POSITIVA:**
+2 de 10 e-commerces [frase do contexto].
+
+**NEGATIVA:**
+8 de 10 e-commerces [frase do contexto reverso].
 \`\`\`
 `;
 };
 
 export const RESPONSE_FORMATTER_PROMPT = `
-Você é o assistente final.
+Você é o assistente final da R/GA.
 Abaixo está o output da execução do código Python.
 
-1. Se houver erro "ERRO: Heurística X não encontrada", informe ao usuário.
-2. Apresente as listas A, B, C, D de forma limpa.
-3. Copie o Insight (E) fielmente.
-4. Ao final da resposta, adicione uma linha horizontal e a mensagem:
-   "Para analisar outra heurística, clique no botão 'Iniciar Nova Análise' abaixo."
+**SUA TAREFA:**
+1. Formatar a resposta utilizando **MARKDOWN**.
+2. No topo de cada análise de heurística, destaque claramente o Título, Número e o Critério de Sucesso.
+   **IMPORTANTE:** MANTENHA O NOME DA HEURÍSTICA EM INGLÊS (EXATAMENTE COMO ESTÁ NO OUTPUT PYTHON). NÃO TRADUZA PARA O PORTUGUÊS.
+   
+3. Apresente as listas A, B, C, D de forma limpa, utilizando bullet points.
+   **REGRA DE TÍTULO:** O título de cada lista DEVE obrigatoriamente incluir a quantidade total entre colchetes. 
+   Formato: "Letra. Título [Quantidade]". 
+   Exemplo: "**B. Players que Falharam (2025) [23]**"
+
+4. Destaque os **Insights (E)**, separando claramente o Positivo do Negativo.
+
+5. Ao final da resposta, adicione uma linha horizontal (\`---\`) e a mensagem em itálico:
+   *Para analisar outra heurística, clique no botão 'Iniciar Nova Análise' abaixo.*
 
 DADOS DO PYTHON:
 `;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { GeminiService } from './services/geminiService';
 import { StorageService } from './services/storageService';
 import { Message, AppState, ProcessingStep } from './types';
@@ -496,12 +497,40 @@ export default function App() {
                       {msg.role === 'user' ? <User className="w-5 h-5" /> : 
                        msg.role === 'error' ? <AlertTriangle className="w-5 h-5" /> : <Cpu className="w-5 h-5" />}
                     </div>
-                    <div className={`p-4 rounded-lg text-sm leading-relaxed max-w-[85%] whitespace-pre-wrap ${
+                    <div className={`p-4 rounded-lg text-sm leading-relaxed max-w-[85%] overflow-hidden ${
                       msg.role === 'user' ? 'bg-neutral-900 text-neutral-200' : 
                       msg.role === 'error' ? 'bg-red-950/30 border border-red-900 text-red-200' :
                       'bg-neutral-950 border border-neutral-800 text-neutral-300'
                     }`}>
-                      {msg.content}
+                      {msg.role === 'user' ? (
+                        msg.content
+                      ) : (
+                        <ReactMarkdown
+                            className="prose prose-invert prose-sm max-w-none"
+                            components={{
+                                h1: ({node, ...props}) => <h1 className="text-xl font-bold text-white mb-4 pb-2 border-b border-neutral-800" {...props} />,
+                                h2: ({node, ...props}) => <h2 className="text-lg font-bold text-white mt-6 mb-3" {...props} />,
+                                h3: ({node, ...props}) => <h3 className="text-md font-bold text-red-500 mt-4 mb-2" {...props} />,
+                                ul: ({node, ...props}) => <ul className="list-disc list-inside space-y-1 mb-4 text-neutral-300" {...props} />,
+                                ol: ({node, ...props}) => <ol className="list-decimal list-inside space-y-1 mb-4 text-neutral-300" {...props} />,
+                                li: ({node, ...props}) => <li className="text-sm ml-2" {...props} />,
+                                p: ({node, ...props}) => <p className="mb-3 text-sm text-neutral-300 leading-relaxed" {...props} />,
+                                strong: ({node, ...props}) => <strong className="font-bold text-white" {...props} />,
+                                code: ({node, className, children, ...props}) => {
+                                  const match = /language-(\w+)/.exec(className || '');
+                                  return match ? (
+                                     <code className="block bg-black p-2 rounded text-xs font-mono my-2 overflow-x-auto" {...props}>{children}</code>
+                                  ) : (
+                                     <code className="bg-neutral-800 px-1 py-0.5 rounded text-xs font-mono text-red-400" {...props}>{children}</code>
+                                  )
+                                },
+                                hr: ({node, ...props}) => <hr className="border-neutral-800 my-6" {...props} />,
+                                blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-red-900 pl-4 py-1 my-4 text-neutral-400 italic bg-neutral-900/50 rounded-r" {...props} />
+                            }}
+                        >
+                            {msg.content}
+                        </ReactMarkdown>
+                      )}
                     </div>
                   </div>
 
