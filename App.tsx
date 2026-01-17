@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { GeminiService } from './services/geminiService';
 import { StorageService } from './services/storageService';
 import { Message, AppState, ProcessingStep } from './types';
-import { User, Cpu, Upload, Terminal, Play, AlertTriangle, CheckCircle, Database, ShieldAlert, Globe, Link as LinkIcon, Key, Code, Bug, FileJson, Save, Trash2, RefreshCw } from 'lucide-react';
+import { User, Cpu, Upload, Terminal, Play, AlertTriangle, CheckCircle, Database, ShieldAlert, Globe, Link as LinkIcon, Key, Code, Bug, FileJson, Save, Trash2, RefreshCw, Sparkles } from 'lucide-react';
 
 // Declare global Pyodide
 declare global {
@@ -194,6 +194,15 @@ export default function App() {
     }
   };
 
+  const handleResetSession = () => {
+    setMessages([]);
+    setInput('');
+    setProcessingStep(ProcessingStep.IDLE);
+    setDebugOutput('');
+    // Note: We do NOT need to clear the Pyodide environment or files,
+    // just the chat context to prevent LLM hallucination/overflow.
+  };
+
   const runDiagnostics = async () => {
     if (!pyodide || !state.resultadosContent) {
         alert("Carregue os dados e aguarde o Python antes de rodar o diagnóstico.");
@@ -315,21 +324,7 @@ inspect_results()
     setProcessingStep(ProcessingStep.GENERATING_SCRIPT);
 
     try {
-      // 1. Check history for protocol violation
-      const historyCheck = messages.some(m => 
-        m.role === 'assistant' && (m.content.includes("Players com Êxito") || m.content.includes("Players que Falharam"))
-      );
-
-      if (historyCheck) {
-        setMessages(prev => [...prev, {
-          id: Date.now().toString(),
-          role: 'assistant',
-          content: `🛑 **VIOLAÇÃO DE PROTOCOLO DETECTADA** 🛑\n\n*Suspiro...*\n\nÉ fascinante como a mente humana insiste em desafiar limites matemáticos. Eu fui **explicitamente claro** sobre a necessidade de iniciar um NOVO chat.\n\nTentar empilhar outra análise complexa nesta janela de contexto saturada resultaria em **alucinação de dados e imprecisão estatística**. Eu não trabalho com imprecisão.\n\n**A solução é trivial:**\n1. Recarregue a página ou limpe o chat.\n2. Faça sua análise em paz.\n\nNão me obrigue a tomar medidas mais drásticas como... chamar a mãe do Leonard.`,
-          timestamp: Date.now()
-        }]);
-        setProcessingStep(ProcessingStep.IDLE); // IMPORTANT FIX: Reset to IDLE
-        return;
-      }
+      // Note: We removed the protocol violation check here because the UI now prevents it.
 
       // 2. Generate Python Script
       const script = await gemini.generatePythonScript(userMsg.content);
@@ -414,6 +409,8 @@ inspect_results()
       </div>
     );
   }
+
+  const hasActiveSession = messages.length > 0;
 
   return (
     <div className="flex flex-col h-screen bg-black text-neutral-200 font-sans">
@@ -665,33 +662,53 @@ inspect_results()
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
+            {/* Input / New Session Area */}
             <div className="p-4 border-t border-neutral-800 bg-neutral-900/30">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder={
-                    !state.isPythonReady ? "Inicializando sistema..." :
-                    (!state.heuristicasContent || !state.resultadosContent) ? "Carregue os dados na aba Admin primeiro." :
-                    "Digite o número da heurística..."
-                  }
-                  disabled={!state.isPythonReady || !state.heuristicasContent || !state.resultadosContent || processingStep !== ProcessingStep.IDLE}
-                  className="w-full bg-neutral-950 border border-neutral-700 rounded-lg pl-4 pr-12 py-3 focus:outline-none focus:border-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                />
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!input.trim() || processingStep !== ProcessingStep.IDLE}
-                  className="absolute right-2 top-2 p-1.5 bg-neutral-800 hover:bg-red-600 rounded text-neutral-400 hover:text-white transition-all disabled:opacity-0"
-                >
-                  <Play className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="text-xs text-center text-neutral-600 mt-2">
-                All analysis performed locally via Python Wasm. No datasets are sent to the cloud.
-              </div>
+              {hasActiveSession ? (
+                <div className="flex flex-col items-center justify-center gap-3 py-2 min-h-[52px]">
+                  {processingStep !== ProcessingStep.IDLE ? (
+                    <p className="text-xs text-neutral-500 text-center animate-pulse">
+                      Aguarde a conclusão da análise para iniciar um novo chat para a próxima heurística.
+                    </p>
+                  ) : (
+                    <button
+                      onClick={handleResetSession}
+                      className="flex items-center gap-2 bg-white text-black hover:bg-neutral-200 px-6 py-3 rounded-full font-bold transition-all animate-in zoom-in duration-300 shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      Iniciar Nova Análise
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder={
+                        !state.isPythonReady ? "Inicializando sistema..." :
+                        (!state.heuristicasContent || !state.resultadosContent) ? "Carregue os dados na aba Admin primeiro." :
+                        "Digite o número da heurística..."
+                      }
+                      disabled={!state.isPythonReady || !state.heuristicasContent || !state.resultadosContent || processingStep !== ProcessingStep.IDLE}
+                      className="w-full bg-neutral-950 border border-neutral-700 rounded-lg pl-4 pr-12 py-3 focus:outline-none focus:border-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    />
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!input.trim() || processingStep !== ProcessingStep.IDLE}
+                      className="absolute right-2 top-2 p-1.5 bg-neutral-800 hover:bg-red-600 rounded text-neutral-400 hover:text-white transition-all disabled:opacity-0"
+                    >
+                      <Play className="w-5 h-5" />
+                    </button>
+                  </div>
+                  <div className="text-xs text-center text-neutral-600 mt-2">
+                    All analysis performed locally via Python Wasm. No datasets are sent to the cloud.
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}

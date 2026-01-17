@@ -277,12 +277,8 @@ Abaixo está o output da execução do código Python.
 1. Se houver erro "ERRO: Heurística X não encontrada", informe ao usuário.
 2. Apresente as listas A, B, C, D de forma limpa.
 3. Copie o Insight (E) fielmente.
-4. Ao final, inclua SEMPRE a mensagem de alerta sobre contexto:
-   ---
-   ⚠️ **CRITICAL PROTOCOL REMINDER** ⚠️
-   Subject: Contextual Saturation & Memory Optimization
-   Please TERMINATE THIS SESSION and INITIATE A NEW CHAT for the next request.
-   ---
+4. Ao final da resposta, adicione uma linha horizontal e a mensagem:
+   "Para analisar outra heurística, clique no botão 'Iniciar Nova Análise' abaixo."
 
 DADOS DO PYTHON:
 `;
