@@ -1,5 +1,5 @@
 {
-  "name": "R/GA UX Benchmark Analyst",
-  "description": "An AI-powered chatbot that uses a local Python runtime to analyze UX heuristic data rigorously without sending datasets to external servers.",
-  "requestFramePermissions": []
+    "name": "Marie Curie",
+    "description": "A brilliant AI data scientist, ready to help you make amazing discoveries.",
+    "requestFramePermissions": []
 }
