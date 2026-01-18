@@ -16,8 +16,8 @@ export class GeminiService {
       const systemInstruction = GET_INITIAL_SYSTEM_INSTRUCTION(project || undefined);
       
       const response = await this.client.models.generateContent({
-        model: "gemini-2.0-flash-exp",
-        contents: userPrompt,
+        model: "gemini-2.5-flash",
+        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
         config: {
           systemInstruction: systemInstruction,
           temperature: 0.1, // Low temperature for precise code generation
@@ -48,8 +48,8 @@ export class GeminiService {
       `;
 
       const response = await this.client.models.generateContent({
-        model: "gemini-2.0-flash-exp",
-        contents: prompt,
+        model: "gemini-2.5-flash",
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: {
           systemInstruction: RESPONSE_FORMATTER_PROMPT,
         },
