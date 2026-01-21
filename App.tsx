@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { GeminiService } from "./services/geminiService";
+import { OllamaService } from "./services/ollamaService";
 import { StorageService } from "./services/storageService";
 import { Message, AppState, ProcessingStep } from "./types";
 import { projects, Project } from "./projects";
@@ -46,6 +47,13 @@ declare global {
     }
 }
 
+type ModelProvider = "gemini" | "ollama";
+const MODEL_STORAGE_KEY = "rga_model_provider";
+const MODEL_OPTIONS: { value: ModelProvider; label: string }[] = [
+    { value: "gemini", label: "Gemini" },
+    { value: "ollama", label: "Ollama/Gemma" },
+];
+
 // Helper para ler API Key em qualquer ambiente (Vite ou Node)
 const getEnvApiKey = () => {
     try {
@@ -71,16 +79,33 @@ const getEnvApiKey = () => {
     return "";
 };
 
+const getInitialModelProvider = (): ModelProvider => {
+    try {
+        const stored =
+            typeof window !== "undefined"
+                ? localStorage.getItem(MODEL_STORAGE_KEY)
+                : null;
+        if (stored === "ollama") return "ollama";
+        return "gemini";
+    } catch (e) {
+        return "gemini";
+    }
+};
+
 export default function App() {
     const [apiKey, setApiKey] = useState(getEnvApiKey());
     const [apiUrl, setApiUrl] = useState("");
     const [resultsApiKey, setResultsApiKey] = useState("");
+    const [modelProvider, setModelProvider] = useState<ModelProvider>(
+        getInitialModelProvider,
+    );
 
     // FIX: Initialize GeminiService immediately if API key exists in environment
     const [gemini, setGemini] = useState<GeminiService | null>(() => {
         const key = getEnvApiKey();
         return key ? new GeminiService(key) : null;
     });
+    const [ollama] = useState<OllamaService>(() => new OllamaService());
 
     const [state, setState] = useState<AppState>({
         hasApiKey: !!getEnvApiKey(),
@@ -133,6 +158,14 @@ export default function App() {
             isMounted = false;
         };
     }, [pyodide]);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(MODEL_STORAGE_KEY, modelProvider);
+        } catch (e) {
+            // Ignore persistence errors (private mode, etc.)
+        }
+    }, [modelProvider]);
 
     // 2. Sync Pyodide FS when data or runtime changes
     useEffect(() => {
@@ -295,8 +328,12 @@ export default function App() {
 
     const handleSendMessage = async () => {
         if (!input.trim()) return;
-        if (!gemini) {
-            alert("Erro: Serviço de IA não inicializado.");
+        const activeService =
+            modelProvider === "gemini" ? gemini : ollama;
+        if (!activeService) {
+            alert(
+                "Erro: Serviço de IA não inicializado. Informe a API Key do Gemini ou selecione o modelo Ollama/Gemma.",
+            );
             return;
         }
         if (!pyodide) {
@@ -320,7 +357,7 @@ export default function App() {
 
         try {
             // Pass the selected project to the generator so it knows the years
-            const script = await gemini.generatePythonScript(
+            const script = await activeService.generatePythonScript(
                 userMsg.content,
                 state.selectedProject,
             );
@@ -356,10 +393,11 @@ export default function App() {
             }
 
             setProcessingStep(ProcessingStep.GENERATING_RESPONSE);
-            const finalResponse = await gemini.generateNaturalLanguageResponse(
-                userMsg.content,
-                pythonOutput,
-            );
+            const finalResponse =
+                await activeService.generateNaturalLanguageResponse(
+                    userMsg.content,
+                    pythonOutput,
+                );
 
             setMessages((prev) => [
                 ...prev,
@@ -395,10 +433,37 @@ export default function App() {
         }
     };
 
-    if (!state.hasApiKey) {
+    if (modelProvider === "gemini" && !state.hasApiKey) {
         return (
             <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
                 <div className="max-w-md w-full bg-neutral-900 border border-neutral-800 p-8 rounded-xl shadow-2xl">
+                    <div className="mb-4">
+                        <label className="text-xs uppercase tracking-wide text-neutral-500">
+                            Selecionar modelo
+                        </label>
+                        <div className="mt-2">
+                            <select
+                                value={modelProvider}
+                                onChange={(e) =>
+                                    setModelProvider(
+                                        e.target.value as ModelProvider,
+                                    )
+                                }
+                                className="w-full bg-neutral-950 border border-neutral-700 rounded p-3 text-white text-sm focus:outline-none focus:border-red-600"
+                            >
+                                {MODEL_OPTIONS.map((option) => (
+                                    <option
+                                        key={option.value}
+                                        value={option.value}
+                                        className="bg-neutral-950"
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
                     <div className="flex justify-center mb-6">
                         <ShieldAlert className="w-16 h-16 text-red-600" />
                     </div>
@@ -472,7 +537,7 @@ export default function App() {
     return (
         <div className="flex flex-col h-screen bg-black text-neutral-200 font-sans">
             {/* Header */}
-            <header className="flex items-center justify-between px-6 py-4 border-b border-neutral-800 bg-neutral-900/50 backdrop-blur z-10">
+            <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-b border-neutral-800 bg-neutral-900/50 backdrop-blur z-10">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-red-600 rounded-sm flex items-center justify-center font-bold text-white">
                         R
@@ -485,48 +550,75 @@ export default function App() {
                     </h1>
                 </div>
 
-                {/* Project Indicator / Back Button */}
-                {state.activeTab === "chat" && state.selectedProject && (
-                    <div className="flex items-center gap-4">
-                        <div className="hidden md:flex flex-col items-end mr-2">
-                            <span className="text-sm font-bold text-white">
-                                {state.selectedProject.name}
-                            </span>
-                            <span className="text-xs text-neutral-500">
-                                {state.selectedProject.year} vs{" "}
-                                {state.selectedProject.previousYear}
-                            </span>
-                        </div>
-                        <button
-                            onClick={handleBackToHome}
-                            className={`text-xs flex items-center gap-2 px-3 py-1.5 rounded transition-all duration-300 ${
-                                exitConfirm
-                                    ? "bg-red-600 text-white hover:bg-red-700 animate-pulse"
-                                    : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
-                            }`}
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-sm">
+                        <span className="text-[11px] uppercase tracking-wide text-neutral-500">
+                            Modelo
+                        </span>
+                        <select
+                            value={modelProvider}
+                            onChange={(e) =>
+                                setModelProvider(
+                                    e.target.value as ModelProvider,
+                                )
+                            }
+                            className="bg-transparent text-white text-sm focus:outline-none"
                         >
-                            {exitConfirm ? (
-                                <XCircle className="w-3 h-3" />
-                            ) : (
-                                <ArrowLeft className="w-3 h-3" />
-                            )}
-                            {exitConfirm
-                                ? "Confirmar Saída?"
-                                : "Trocar Projeto"}
-                        </button>
+                            {MODEL_OPTIONS.map((option) => (
+                                <option
+                                    key={option.value}
+                                    value={option.value}
+                                    className="bg-neutral-900 text-white"
+                                >
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
                     </div>
-                )}
 
-                {state.activeTab === "admin" && (
-                    <button
-                        onClick={() =>
-                            setState((s) => ({ ...s, activeTab: "home" }))
-                        }
-                        className="text-sm text-neutral-400 hover:text-white"
-                    >
-                        Voltar
-                    </button>
-                )}
+                    {/* Project Indicator / Back Button */}
+                    {state.activeTab === "chat" && state.selectedProject && (
+                        <div className="flex items-center gap-4">
+                            <div className="hidden md:flex flex-col items-end mr-2">
+                                <span className="text-sm font-bold text-white">
+                                    {state.selectedProject.name}
+                                </span>
+                                <span className="text-xs text-neutral-500">
+                                    {state.selectedProject.year} vs{" "}
+                                    {state.selectedProject.previousYear}
+                                </span>
+                            </div>
+                            <button
+                                onClick={handleBackToHome}
+                                className={`text-xs flex items-center gap-2 px-3 py-1.5 rounded transition-all duration-300 ${
+                                    exitConfirm
+                                        ? "bg-red-600 text-white hover:bg-red-700 animate-pulse"
+                                        : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
+                                }`}
+                            >
+                                {exitConfirm ? (
+                                    <XCircle className="w-3 h-3" />
+                                ) : (
+                                    <ArrowLeft className="w-3 h-3" />
+                                )}
+                                {exitConfirm
+                                    ? "Confirmar Saída?"
+                                    : "Trocar Projeto"}
+                            </button>
+                        </div>
+                    )}
+
+                    {state.activeTab === "admin" && (
+                        <button
+                            onClick={() =>
+                                setState((s) => ({ ...s, activeTab: "home" }))
+                            }
+                            className="text-sm text-neutral-400 hover:text-white"
+                        >
+                            Voltar
+                        </button>
+                    )}
+                </div>
             </header>
 
             {/* Main Content */}
