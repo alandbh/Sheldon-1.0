@@ -328,8 +328,7 @@ export default function App() {
 
     const handleSendMessage = async () => {
         if (!input.trim()) return;
-        const activeService =
-            modelProvider === "gemini" ? gemini : ollama;
+        const activeService = modelProvider === "gemini" ? gemini : ollama;
         if (!activeService) {
             alert(
                 "Erro: Serviço de IA não inicializado. Informe a API Key do Gemini ou selecione o modelo Ollama/Gemma.",
@@ -551,7 +550,8 @@ export default function App() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-sm">
+                    {/* I changed classname "flex" to hidden */}
+                    <div className="hidden items-center gap-2 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-sm">
                         <span className="text-[11px] uppercase tracking-wide text-neutral-500">
                             Modelo
                         </span>
@@ -648,10 +648,10 @@ export default function App() {
                                         <div className="bg-red-600/10 text-red-500 p-3 rounded-lg group-hover:bg-red-600 group-hover:text-white transition-colors">
                                             <BarChart3 className="w-6 h-6" />
                                         </div>
-                            <span className="bg-neutral-950 text-neutral-500 text-xs px-2 py-1 rounded border border-neutral-800 font-mono">
-                                {proj.year}
-                            </span>
-                        </div>
+                                        <span className="bg-neutral-950 text-neutral-500 text-xs px-2 py-1 rounded border border-neutral-800 font-mono">
+                                            {proj.year}
+                                        </span>
+                                    </div>
 
                                     <div>
                                         <h3 className="text-xl font-bold text-white group-hover:text-red-500 transition-colors">
