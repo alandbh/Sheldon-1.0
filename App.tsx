@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { GeminiService } from "./services/geminiService";
 import { OllamaService } from "./services/ollamaService";
 import { StorageService } from "./services/storageService";
+import MarieFace from "./assets/marie-face2.svg";
 import { Message, AppState, ProcessingStep } from "./types";
 import { projects, Project } from "./projects";
 import {
@@ -437,7 +438,7 @@ export default function App() {
 
     if (modelProvider === "gemini" && !state.hasApiKey) {
         return (
-            <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+            <div className="min-h-screen bg-slate-200 text-white flex items-center justify-center p-4">
                 <div className="max-w-md w-full bg-neutral-900 border border-neutral-800 p-8 rounded-xl shadow-2xl">
                     <div className="mb-4">
                         <label className="text-xs uppercase tracking-wide text-neutral-500">
@@ -537,9 +538,9 @@ export default function App() {
     }
 
     return (
-        <div className="flex flex-col h-screen bg-black text-neutral-200 font-sans">
+        <div className="flex flex-col h-screen bg-slate-200 text-slate-800 font-sans">
             {/* Header */}
-            <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-b border-neutral-800 bg-neutral-900/50 backdrop-blur z-10">
+            <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-4 border-b border-slate-400 bg-slate-100 backdrop-blur z-10">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-red-600 rounded-sm flex items-center justify-center font-bold text-white">
                         M
@@ -606,7 +607,7 @@ export default function App() {
                                 )}
                                 {exitConfirm
                                     ? "Confirmar Saída?"
-                                    : "Trocar Projeto"}
+                                    : "Trocar de Projeto"}
                             </button>
                         </div>
                     )}
@@ -630,12 +631,19 @@ export default function App() {
                 {state.activeTab === "home" && (
                     <div className="h-full overflow-y-auto p-8 max-w-5xl mx-auto flex flex-col items-center">
                         <div className="text-center mb-12 mt-10">
-                            <h2 className="text-4xl font-bold text-white mb-4">
-                                Selecione o Estudo
+                            <img
+                                src={MarieFace}
+                                alt="Marie"
+                                className="w-28 h-28 mx-auto mb-6"
+                            />
+
+                            <h2 className="text-4xl font-bold text-blue-500 mb-4">
+                                Cześć! My name is Marie 👋
                             </h2>
-                            <p className="text-neutral-400 max-w-lg mx-auto">
-                                Escolha um projeto abaixo e pergunte qualquer
-                                coisa sobre o estudo.
+
+                            <p className="text-slate-600 max-w-lg mx-auto">
+                                A brilliant AI data scientist, ready to help you
+                                make amazing discoveries.
                             </p>
                             {!state.isPythonReady && (
                                 <div className="flex items-center justify-center gap-2 text-sm text-neutral-400 mt-4">
