@@ -50,11 +50,11 @@ Analise a intenção do usuário e escolha **UM** dos três modos abaixo para ge
 3. Considere apenas o ano corrente (\`players_current\`) a menos que o usuário peça comparação histórica.
 4. Respeite \`ignore_journey\` e \`zeroed_journey\` como no template padrão.
 5. Para cada player elegível, colete as jornadas da heurística e imprima **apenas** notas não vazias, truncadas a 280 caracteres.
-6. Formato de saída (Markdown simples, sem JSON):  
+6. Formato de saída (Markdown simples em uma linha por nota, sem JSON):  
    \`print(f"### Notas Qualitativas {h_id} ({currentYear})")\`  
-   Depois, para cada player com ao menos uma nota válida:  
-   \`print(f"- {player_name}")\`  
-   \`print(f"  - [{journey}] {note_trunc}")\`  
+   \`print("PLAYER | JOURNEY | NOTE")\`  
+   \`print("--- | --- | ---")\`  
+   Para cada nota válida: \`print(f"{player_name} | {journey} | {note_trunc}")\`  
    Não imprima listas A/B/C/D/E aqui.
 
 ---
@@ -275,15 +275,15 @@ Use este modo apenas quando a pergunta depender da leitura do campo \`note\`.
 3) **Coleta de notas**  
    - Para cada player: percorra as jornadas que tenham \`h_{h_id}\` com nota não vazia.  
    - Não faça pré-filtragem por palavras-chave; apenas traga as notas da heurística selecionada.  
-   - Puxe \`note\` como string e aplique truncamento seguro: \`note_clean = str(note or "")[:280]\`.  
+   - Puxe \`note\` como string, limpe quebras de linha/pipes e aplique truncamento seguro:  
+     \`note_clean = " ".join(str(note or "").replace("|", "/").split())[:280]\`.  
    - Se após truncar ainda estiver vazia, não imprima a jornada. Se o player ficar sem jornadas, não imprima o player.  
    - Use \`safe_get_name(player)\` para nome.
 
 4) **Output esperado (Markdown simples)**  
    - Cabeçalho único: \`### Notas Qualitativas {h_id} ({currentYear})\`.  
-   - Para cada player listado:  
-     \`print(f"- {player_name}")\`  
-     Para cada jornada com nota: \`print(f"  - [{journey}] {note_clean}")\`  
+   - Em seguida, imprima \`PLAYER | JOURNEY | NOTE\` e a linha de separador \`--- | --- | ---\`.  
+   - Para cada jornada com nota: \`print(f"{player_name} | {journey} | {note_clean}")\` (uma linha por nota).  
    - Não use listas A/B/C/D/E neste modo. Não adicione JSON.
 
 ---
