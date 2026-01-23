@@ -855,32 +855,38 @@ Our lab only accepts scientists from R/GA. But if you really, really want to par
                             </button>
 
                             {isProfileOpen && (
-                                <div className="absolute z-10 right-0 mt-3 w-72 bg-white border border-white/80 shadow-[0_20px_60px_rgba(90,120,200,0.18)] rounded-2xl p-4 flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center text-base font-bold uppercase">
-                                        {user.photoURL ? (
-                                            <img
-                                                src={user.photoURL}
-                                                alt={user.name || user.email}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            (user.name || user.email).charAt(0)
-                                        )}
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-[11px] uppercase tracking-wide text-slate-500">
-                                            Conectado
-                                        </p>
-                                        <p className="text-sm font-semibold text-slate-900">
-                                            {user.name || user.email}
-                                        </p>
-                                        <p className="text-xs text-slate-500">
-                                            {user.email}
-                                        </p>
+                                <div className="absolute z-10 right-0 mt-3 w-72 bg-white border border-white/80 shadow-[0_20px_60px_rgba(90,120,200,0.18)] rounded-2xl p-4 flex flex-col items-start">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-sky-500 to-indigo-600 text-white flex items-center justify-center text-base font-bold uppercase">
+                                            {user.photoURL ? (
+                                                <img
+                                                    src={user.photoURL}
+                                                    alt={
+                                                        user.name || user.email
+                                                    }
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                (
+                                                    user.name || user.email
+                                                ).charAt(0)
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            {/* <p className="text-[11px] uppercase tracking-wide text-slate-500">
+                                                Conectado
+                                            </p> */}
+                                            <p className="text-sm font-semibold text-slate-900">
+                                                {user.name || user.email}
+                                            </p>
+                                            <p className="text-xs text-slate-500">
+                                                {user.email}
+                                            </p>
+                                        </div>
                                     </div>
                                     <button
                                         onClick={handleSignOut}
-                                        className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-2 rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-colors"
+                                        className="inline-flex ml-auto items-center gap-1 text-xs font-semibold py-3 px-5 rounded-full bg-slate-900 text-white hover:bg-slate-800 transition-colors"
                                     >
                                         <LogOut className="w-3 h-3" />
                                         Logout
