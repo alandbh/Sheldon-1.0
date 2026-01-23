@@ -320,7 +320,8 @@ export default function App() {
 
             if (allowedList.length === 0) {
                 setAuthError(
-                    "Acesso restrito a contas @rga.com. Peça para ser incluído em allowedUsers em projects.ts.",
+                    `We're so sorry! 😔
+Our lab only accepts scientists from R/GA. But if you really, really want to participate, contact the project leaders. Who knows, you might be able to get in?`,
                 );
                 await signOut(auth);
                 return;
