@@ -253,7 +253,7 @@
     background: linear-gradient(135deg, #548dff, #8a6bff);
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 18px 45px rgba(88, 120, 255, 0.25);
+    /* box-shadow: 0 18px 45px rgba(88, 120, 255, 0.25); */
     border-radius: 18px 0px 18px 18px;
 }
 .bubble-assistant {
