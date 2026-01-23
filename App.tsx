@@ -166,19 +166,16 @@ export default function App() {
     const normalizeEmail = (email?: string | null) =>
         (email || "").trim().toLowerCase();
     const isInternalEmail = (email: string) => email.endsWith("@rga.com");
-    const projectsAllowedForUser = useMemo(
-        () => {
-            const normalized = normalizeEmail(user?.email);
-            if (!normalized) return [];
-            if (isInternalEmail(normalized)) return projects;
-            return projects.filter((proj) =>
-                (proj.allowedUsers || []).some(
-                    (allowed) => normalizeEmail(allowed) === normalized,
-                ),
-            );
-        },
-        [user],
-    );
+    const projectsAllowedForUser = useMemo(() => {
+        const normalized = normalizeEmail(user?.email);
+        if (!normalized) return [];
+        if (isInternalEmail(normalized)) return projects;
+        return projects.filter((proj) =>
+            (proj.allowedUsers || []).some(
+                (allowed) => normalizeEmail(allowed) === normalized,
+            ),
+        );
+    }, [user]);
 
     const userCanAccessProject = (project: Project) => {
         const normalized = normalizeEmail(user?.email);
@@ -230,7 +227,8 @@ export default function App() {
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
     }, [isProfileOpen]);
 
     useEffect(() => {
@@ -499,7 +497,9 @@ export default function App() {
     const handleSendMessage = async () => {
         if (!input.trim()) return;
         if (!user) {
-            alert("Faça login com sua conta Google para conversar com a Marie.");
+            alert(
+                "Faça login com sua conta Google para conversar com a Marie.",
+            );
             return;
         }
         const activeService = modelProvider === "gemini" ? gemini : ollama;
@@ -653,8 +653,8 @@ export default function App() {
                                 Configure o Firebase para habilitar o botão:
                                 defina VITE_FIREBASE_API_KEY,
                                 VITE_FIREBASE_AUTH_DOMAIN,
-                                VITE_FIREBASE_PROJECT_ID e
-                                VITE_FIREBASE_APP_ID no painel da Vercel.
+                                VITE_FIREBASE_PROJECT_ID e VITE_FIREBASE_APP_ID
+                                no painel da Vercel.
                             </div>
                         )}
 
@@ -709,15 +709,12 @@ export default function App() {
     // --- LOADING SKELETON UI ---
     if (state.isLoadingData) {
         return (
-            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8 space-y-8 animate-in fade-in duration-500">
+            <div className="min-h-screen flex flex-col items-center justify-center p-8 space-y-8 animate-in fade-in duration-500">
                 <div className="flex flex-col items-center">
-                    <Loader2 className="w-12 h-12 text-red-600 animate-spin mb-4" />
-                    <h2 className="text-2xl font-bold">
-                        Inicializando Ambiente
-                    </h2>
+                    <Loader2 className="w-12 h-12 text-blue-600 animate-spin mb-4" />
+                    <h2 className="text-2xl font-bold">Preparing our lab</h2>
                     <p className="text-neutral-500 mt-2">
-                        Carregando dados do projeto{" "}
-                        {state.selectedProject?.name}...
+                        Loading project data {state.selectedProject?.name}...
                     </p>
                 </div>
 
