@@ -14,7 +14,6 @@ import { AuthUser, Message, AppState, ProcessingStep } from "./types";
 import { projects, Project } from "./projects";
 import {
     User,
-    Cpu,
     Upload,
     Terminal,
     Play,
