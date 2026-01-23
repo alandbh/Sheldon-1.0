@@ -2,204 +2,324 @@
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+    width: 8px;
+    height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #1a1a1a; 
+    background: #1a1a1a;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333; 
-  border-radius: 4px;
+    background: #333;
+    border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+    background: #555;
 }
 
 /* Ambient backgrounds */
 .home-background {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  z-index: 0;
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
 }
 .mesh-gradient {
-  position: absolute;
-  inset: -20% -10%;
-  background: radial-gradient(circle at 20% 20%, rgba(119, 182, 255, 0.35), transparent 35%),
-              radial-gradient(circle at 80% 0%, rgba(188, 144, 255, 0.3), transparent 36%),
-              radial-gradient(circle at 50% 80%, rgba(255, 222, 179, 0.25), transparent 38%);
-  filter: blur(60px);
-  animation: drift 22s ease-in-out infinite alternate;
+    position: absolute;
+    inset: -20% -10%;
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(119, 182, 255, 0.35),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 80% 0%,
+            rgba(188, 144, 255, 0.3),
+            transparent 36%
+        ),
+        radial-gradient(
+            circle at 50% 80%,
+            rgba(255, 222, 179, 0.25),
+            transparent 38%
+        );
+    filter: blur(60px);
+    animation: drift 22s ease-in-out infinite alternate;
 }
 .home-background.chat-mode .mesh-gradient {
-  background: radial-gradient(circle at 25% 15%, rgba(119, 182, 255, 0.4), transparent 35%),
-              radial-gradient(circle at 80% 20%, rgba(255, 166, 210, 0.32), transparent 36%),
-              radial-gradient(circle at 55% 85%, rgba(173, 196, 255, 0.3), transparent 38%);
+    background:
+        radial-gradient(
+            circle at 25% 15%,
+            rgba(119, 182, 255, 0.4),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(255, 166, 210, 0.32),
+            transparent 36%
+        ),
+        radial-gradient(
+            circle at 55% 85%,
+            rgba(173, 196, 255, 0.3),
+            transparent 38%
+        );
 }
 .orb {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(30px);
-  opacity: 0.65;
-  mix-blend-mode: screen;
-  animation: float 14s ease-in-out infinite alternate;
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(30px);
+    opacity: 0.65;
+    mix-blend-mode: screen;
+    animation: float 14s ease-in-out infinite alternate;
 }
-.orb-a { width: 380px; height: 380px; background: rgba(125, 167, 255, 0.42); top: 8%; left: 5%; }
-.orb-b { width: 320px; height: 320px; background: rgba(255, 182, 193, 0.38); right: 6%; top: 18%; animation-duration: 18s; }
-.orb-c { width: 420px; height: 420px; background: rgba(164, 211, 255, 0.32); bottom: -6%; left: 25%; animation-duration: 24s; }
+.orb-a {
+    width: 380px;
+    height: 380px;
+    background: rgba(125, 167, 255, 0.42);
+    top: 8%;
+    left: 5%;
+}
+.orb-b {
+    width: 320px;
+    height: 320px;
+    background: rgba(255, 182, 193, 0.38);
+    right: 6%;
+    top: 18%;
+    animation-duration: 18s;
+}
+.orb-c {
+    width: 420px;
+    height: 420px;
+    background: rgba(164, 211, 255, 0.32);
+    bottom: -6%;
+    left: 25%;
+    animation-duration: 24s;
+}
 .grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(99, 118, 173, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 118, 173, 0.08) 1px, transparent 1px);
-  background-size: 120px 120px;
-  opacity: 0.45;
-  mask-image: radial-gradient(circle at center, rgba(0,0,0,0.6), transparent 75%);
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(99, 118, 173, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 118, 173, 0.08) 1px, transparent 1px);
+    background-size: 120px 120px;
+    opacity: 0.45;
+    mask-image: radial-gradient(
+        circle at center,
+        rgba(0, 0, 0, 0.6),
+        transparent 75%
+    );
 }
 
 /* Card + avatar accents */
 .glass-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.85), rgba(255,255,255,0.7));
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(14px);
-  box-shadow: 0 25px 80px rgba(92, 133, 255, 0.16);
+    background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.85),
+        rgba(255, 255, 255, 0.7)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 25px 80px rgba(92, 133, 255, 0.16);
 }
 .card-glow {
-  position: absolute;
-  inset: -20% -10%;
-  background: radial-gradient(circle at 30% 20%, rgba(112, 178, 255, 0.25), transparent 40%),
-              radial-gradient(circle at 80% 50%, rgba(255, 201, 241, 0.22), transparent 40%);
-  filter: blur(40px);
-  opacity: 0.8;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
+    position: absolute;
+    inset: -20% -10%;
+    background:
+        radial-gradient(
+            circle at 30% 20%,
+            rgba(112, 178, 255, 0.25),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at 80% 50%,
+            rgba(255, 201, 241, 0.22),
+            transparent 40%
+        );
+    filter: blur(40px);
+    opacity: 0.8;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
 }
-.glass-card:hover .card-glow { opacity: 1; }
+.glass-card:hover .card-glow {
+    opacity: 1;
+}
 .icon-pill {
-  width: 44px;
-  height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(79, 139, 255, 0.18), rgba(140, 88, 255, 0.18));
-  color: #1f3a6f;
-  border: 1px solid rgba(99, 126, 255, 0.35);
-  transition: transform 0.35s ease;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(
+        135deg,
+        rgba(79, 139, 255, 0.18),
+        rgba(140, 88, 255, 0.18)
+    );
+    color: #1f3a6f;
+    border: 1px solid rgba(99, 126, 255, 0.35);
+    transition: transform 0.35s ease;
 }
 .year-badge {
-  padding: 6px 12px;
-  font-size: 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 12px 30px rgba(92, 133, 255, 0.18);
-  color: #3a4a74;
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 12px 30px rgba(92, 133, 255, 0.18);
+    color: #3a4a74;
 }
 .sparkle {
-  position: absolute;
-  top: -14px;
-  left: 16px;
-  width: 38px;
-  height: 38px;
-  background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0));
-  opacity: 0.25;
-  filter: blur(1px);
-  animation: twinkle 3.4s ease-in-out infinite;
+    position: absolute;
+    top: -14px;
+    left: 16px;
+    width: 38px;
+    height: 38px;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.95),
+        rgba(255, 255, 255, 0)
+    );
+    opacity: 0.25;
+    filter: blur(1px);
+    animation: twinkle 3.4s ease-in-out infinite;
 }
 .avatar-glow {
-  position: absolute;
-  inset: -14px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(114, 170, 255, 0.6), transparent 60%);
-  filter: blur(28px);
-  z-index: 0;
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(114, 170, 255, 0.6),
+        transparent 60%
+    );
+    filter: blur(28px);
+    z-index: 0;
 }
 
 /* Chat panel */
 .chat-pane {
-  position: relative;
-  background: linear-gradient(150deg, rgba(255,255,255,0.88), rgba(255,255,255,0.76));
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 28px;
-  box-shadow: 0 30px 80px rgba(90, 130, 255, 0.18);
-  backdrop-filter: blur(16px);
-  padding: 24px;
-  overflow: hidden;
+    position: relative;
+    background: linear-gradient(
+        150deg,
+        rgba(255, 255, 255, 0.88),
+        rgba(255, 255, 255, 0.76)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 28px;
+    box-shadow: 0 30px 80px rgba(90, 130, 255, 0.18);
+    backdrop-filter: blur(16px);
+    padding: 24px;
+    overflow: hidden;
 }
 .chat-pane::before {
-  content: "";
-  position: absolute;
-  inset: -40% -20%;
-  background: radial-gradient(circle at 25% 20%, rgba(132, 177, 255, 0.14), transparent 40%),
-              radial-gradient(circle at 80% 30%, rgba(255, 192, 222, 0.12), transparent 38%);
-  filter: blur(55px);
-  z-index: 0;
+    content: "";
+    position: absolute;
+    inset: -40% -20%;
+    background:
+        radial-gradient(
+            circle at 25% 20%,
+            rgba(132, 177, 255, 0.14),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at 80% 30%,
+            rgba(255, 192, 222, 0.12),
+            transparent 38%
+        );
+    filter: blur(55px);
+    z-index: 0;
 }
-.chat-pane > * { position: relative; z-index: 1; }
+.chat-pane > * {
+    position: relative;
+    z-index: 1;
+}
 .chat-feed {
-  padding: 12px 6px 28px 4px;
-  min-height: 0;
-  scroll-padding-top: 16px;
+    padding: 12px 6px 28px 4px;
+    min-height: 0;
+    scroll-padding-top: 16px;
 }
 .chat-bubble {
-  padding: 14px 16px;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75));
-  box-shadow: 0 14px 36px rgba(90, 130, 255, 0.14);
-  backdrop-filter: blur(14px);
+    padding: 14px 16px;
+    border-radius: 0px 18px 18px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    /* background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.75)
+    );
+    box-shadow: 0 14px 36px rgba(90, 130, 255, 0.14);
+    backdrop-filter: blur(14px); */
 }
 .bubble-user {
-  background: linear-gradient(135deg, #548dff, #8a6bff);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 0 18px 45px rgba(88, 120, 255, 0.25);
+    background: linear-gradient(135deg, #548dff, #8a6bff);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 18px 45px rgba(88, 120, 255, 0.25);
+    border-radius: 18px 0px 18px 18px;
 }
-.bubble-assistant { color: #1f2748; }
+.bubble-assistant {
+    color: #1f2748;
+}
 .bubble-error {
-  background: linear-gradient(135deg, #ffe2e2, #ffd4d4);
-  color: #7a1d1d;
-  border-color: rgba(255, 180, 180, 0.9);
+    background: linear-gradient(135deg, #ffe2e2, #ffd4d4);
+    color: #7a1d1d;
+    border-color: rgba(255, 180, 180, 0.9);
 }
 .log-card {
-  background: #0b1223;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 12px;
-  overflow-x: auto;
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+    background: #0b1223;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 12px;
+    overflow-x: auto;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
 }
 .markdown-body {
-  font-size: 14px;
-  color: #1f2748;
+    font-size: 14px;
+    color: #1f2748;
 }
 .markdown-body a {
-  color: #2356ff;
-  text-decoration: underline;
+    color: #2356ff;
+    text-decoration: underline;
 }
 
 .animate-bounce-slow {
-  animation: bounce-slow 1.8s ease-in-out infinite;
-  transform-origin: center;
+    animation: bounce-slow 1.8s ease-in-out infinite;
+    transform-origin: center;
 }
 
 @keyframes bounce-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(18px) translateX(6px); }
+    0% {
+        transform: translateY(0px);
+    }
+    100% {
+        transform: translateY(18px) translateX(6px);
+    }
 }
 @keyframes drift {
-  0% { transform: translateX(-20px); }
-  100% { transform: translateX(20px); }
+    0% {
+        transform: translateX(-20px);
+    }
+    100% {
+        transform: translateX(20px);
+    }
 }
 @keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(0.95); }
-  50% { opacity: 0.5; transform: scale(1.05); }
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: scale(0.95);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.05);
+    }
 }

@@ -1246,7 +1246,7 @@ Our lab only accepts scientists from R/GA. But if you really, really want to par
                                                             : ""
                                                     }`}
                                                 >
-                                                    <div
+                                                    {/* <div
                                                         className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 shadow-md ${
                                                             msg.role === "user"
                                                                 ? "bg-gradient-to-br from-sky-500 to-indigo-500 text-white"
@@ -1264,7 +1264,7 @@ Our lab only accepts scientists from R/GA. But if you really, really want to par
                                                         ) : (
                                                             <Cpu className="w-5 h-5" />
                                                         )}
-                                                    </div>
+                                                    </div> */}
                                                     <div
                                                         className={`chat-bubble max-w-[85%] ${
                                                             msg.role === "user"
