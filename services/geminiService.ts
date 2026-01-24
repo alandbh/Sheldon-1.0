@@ -3,7 +3,7 @@ import {
     GET_INITIAL_SYSTEM_INSTRUCTION,
     RESPONSE_FORMATTER_PROMPT,
 } from "../constants";
-import { Project } from "../projects";
+import { Project } from "../projects-data";
 
 const PYTHON_ONLY_INSTRUCTION = ``;
 

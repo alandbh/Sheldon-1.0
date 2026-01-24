@@ -1,4 +1,4 @@
-import { Project } from "./projects";
+import { Project } from "./projects-data";
 
 export const GET_INITIAL_SYSTEM_INSTRUCTION = (project?: Project) => {
     const currentYear = project ? project.year : 2025;

@@ -1,4 +1,4 @@
-import { Project } from "./projects";
+import { Project } from "./projects-data";
 
 export interface AuthUser {
   email: string;
