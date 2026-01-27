@@ -322,6 +322,45 @@ def print_player_list(title, player_names):
     print(f"\\n### {title} [{len(clean_names)}]")
     for name in clean_names: print(f"- {name}")
 
+# --- ELEGIBILIDADE ESPECIAL ---
+def player_has_heuristic_object(player, h_id):
+    h_key = f"h_{h_id}"
+    if 'scores' not in player or not isinstance(player['scores'], dict): return False
+    for journey_slug, journey_data in player['scores'].items():
+        if not isinstance(journey_data, dict): continue
+        if journey_data.get('ignore_journey') is True: continue
+        if journey_data.get('zeroed_journey') is True: continue
+        if h_key in journey_data:
+            return True
+    return False
+
+def player_has_score_above(player, h_id, threshold):
+    scores = get_scores_for_heuristic(player, h_id)
+    return any(s > threshold for s in scores)
+
+def is_chatbot_heuristic(h_id):
+    return str(h_id).startswith('8.')
+
+def is_player_eligible(player, h_id):
+    dept = player.get('departmentObj', {}).get('departmentSlug')
+    str_id = str(h_id)
+
+    if is_chatbot_heuristic(str_id):
+        return player_has_score_above(player, '8.2', 1)
+    if str_id == '5.26':
+        return player_has_heuristic_object(player, '5.26')
+    if str_id == '5.15':
+        return player_has_score_above(player, '5.15', 1)
+    if str_id == '4.4':
+        return player_has_score_above(player, '4.4', 1)
+    if str_id == '5.22':
+        return player_has_score_above(player, '5.15', 1)
+    if str_id == '6.5':
+        return dept == 'supermercado'
+    if str_id == '5.29':
+        return dept == 'beauty-and-drugstore'
+    return True
+
 # -- VARIAVEL INJETADA PELO LLM: LISTA DE HEURISTICAS A ANALISAR --
 # Se o usuário não deu o número, use palavras chaves. O finder agora é robusto.
 # Ex: target_ids = [find_heuristic_id_by_text("busca por voz")]
@@ -352,12 +391,13 @@ for h_id in cleaned_ids:
     # 1. Analise Ano Atual
     success_curr, fail_curr = [], []
     for p in players_current:
+        if not is_player_eligible(p, h_id):
+            continue
         scores = get_scores_for_heuristic(p, h_id)
-        if scores:
-            is_success = all(check_success(s, rule) for s in scores)
-            name = safe_get_name(p)
-            if is_success: success_curr.append(name)
-            else: fail_curr.append(name)
+        is_success = bool(scores) and all(check_success(s, rule) for s in scores)
+        name = safe_get_name(p)
+        if is_success: success_curr.append(name)
+        else: fail_curr.append(name)
             
     print_player_list(f"A. Players com Êxito ({currentYear})", success_curr)
     print_player_list(f"B. Players que Falharam ({currentYear})", fail_curr)
@@ -365,19 +405,23 @@ for h_id in cleaned_ids:
     # 2. Analise Evolução
     improved, worsened = [], []
     for p_curr in players_current:
+        if not is_player_eligible(p_curr, h_id):
+            continue
         slug = p_curr.get('slug')
         if not slug: continue
-        
+
         # Busca player correspondente no ano anterior
         p_prev = next((p for p in players_previous if p.get('slug') == slug), None)
-        
+
         if p_prev:
             s_curr_vals = get_scores_for_heuristic(p_curr, h_id)
             status_curr = bool(s_curr_vals) and all(check_success(v, rule) for v in s_curr_vals)
-            
-            s_prev_vals = get_scores_for_heuristic(p_prev, h_id)
-            status_prev = bool(s_prev_vals) and all(check_success(v, rule) for v in s_prev_vals)
-            
+
+            status_prev = False
+            if is_player_eligible(p_prev, h_id):
+                s_prev_vals = get_scores_for_heuristic(p_prev, h_id)
+                status_prev = bool(s_prev_vals) and all(check_success(v, rule) for v in s_prev_vals)
+
             name = safe_get_name(p_curr)
             if not status_prev and status_curr: improved.append(name)
             if status_prev and not status_curr: worsened.append(name)
