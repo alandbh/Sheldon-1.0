@@ -345,6 +345,8 @@ def is_player_eligible(player, h_id):
     dept = player.get('departmentObj', {}).get('departmentSlug')
     str_id = str(h_id)
 
+    if str_id == '8.14':
+        return player_has_score_above(player, '8.14', 1)
     if is_chatbot_heuristic(str_id):
         return player_has_score_above(player, '8.2', 1)
     if str_id == '5.26':
